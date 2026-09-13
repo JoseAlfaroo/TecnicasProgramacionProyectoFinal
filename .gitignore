@@ -1,0 +1,18 @@
+# Archivos compilados de Java (NUNCA deben subirse)
+bin/
+*.class
+
+# Registros y archivos temporales
+*.log
+.DS_Store
+Thumbs.db
+
+# Configuración personal / cache de Eclipse (opcional ignorar metadata personal)
+.metadata/
+*.tmp
+*.bak
+
+# Si algún compañero usa VSCode o IntelliJ, se ignoran sus carpetas locales
+.vscode/
+.idea/
+*.iml
