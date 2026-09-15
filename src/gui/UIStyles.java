@@ -1,11 +1,15 @@
 package gui;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -56,5 +60,18 @@ public class UIStyles {
         btn.setFont(FONT_BTN);
         btn.setFocusPainted(false);
         btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+    
+    public static DatePicker crearDatePickerStandar() {
+        DatePickerSettings settings = new DatePickerSettings(new Locale("es", "PE"));
+        
+        settings.setFormatForDatesCommonEra("dd/MM/yyyy");
+        settings.setAllowEmptyDates(true);
+        
+        settings.setFontValidDate(FONT_REGULAR);
+
+        DatePicker picker = new DatePicker(settings);
+        picker.setDateToToday();
+        return picker;
     }
 }
