@@ -11,10 +11,11 @@ public class PruebaDAO {
     public boolean insertarPrueba(String descripcion) {
         String sql = "INSERT INTO tb_prueba (descripcion) VALUES (?)";
 
-        try (Connection cn = ConexionDB.getConexion();
+        try (Connection cn = ConexionDB.getInstance().getConnection();
              PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setString(1, descripcion);
+            
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
