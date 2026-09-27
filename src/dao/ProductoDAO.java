@@ -106,4 +106,58 @@ public class ProductoDAO {
         return lista;
     }
 	
+	
+	// Actualizar producto - GCM
+	
+	public boolean actualizar(Producto p) {
+		
+		String sql = "UPDATE tb_producto SET codigo = ?, nombre = ?, categoria = ?, " +
+	             "precio_compra = ?, precio_venta = ?, stock_actual = ?, " +
+	             "stock_minimo = ?, fecha_vencimiento = ? " +
+	             "WHERE id_producto = ?";
+		try (Connection cn = ConexionDB.getInstance().getConnection();
+			     PreparedStatement ps = cn.prepareStatement(sql)) {
+			
+			ps.setString(1, p.getCodigo());
+			ps.setString(2, p.getNombre());
+			ps.setString(3, p.getCategoria());
+			ps.setDouble(4, p.getPrecioCompra());
+			ps.setDouble(5, p.getPrecioVenta());
+			ps.setInt(6, p.getStockActual());
+			ps.setInt(7, p.getStockMinimo());
+			
+			if (p.getFechaVencimiento() != null) {
+			    ps.setDate(8, Date.valueOf(p.getFechaVencimiento()));
+			} else {
+			    ps.setNull(8, java.sql.Types.DATE);
+			}
+			
+			ps.setInt(9, p.getIdProducto());
+			return ps.executeUpdate() > 0;
+			
+		} catch (SQLException e) {
+		    System.err.println("Error al actualizar producto en ProductoDAO: " + e.getMessage());
+		    return false;
+		}
+		
+	}
+	
+	// Eliminar lógico producto - GCM
+	
+	public boolean eliminarLogico(int id) {
+		String sql = "UPDATE tb_producto SET activo = false WHERE id_producto = ?";
+		try (Connection cn = ConexionDB.getInstance().getConnection();
+			     PreparedStatement ps = cn.prepareStatement(sql)) {
+			
+			ps.setInt(1, id);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+		    System.err.println("Error al eliminar lógicamente producto en ProductoDAO: " + e.getMessage());
+		    return false;
+		}
+		
+
+	}
+	
+	
 }
