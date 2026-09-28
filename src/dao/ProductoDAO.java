@@ -106,4 +106,44 @@ public class ProductoDAO {
         return lista;
     }
 	
+	public List<Producto> listarActivos() {
+	    List<Producto> lista = new ArrayList<>();
+
+	    String sql = "SELECT id_producto, codigo, nombre, categoria, precio_compra, " +
+	                 "precio_venta, stock_actual, stock_minimo, fecha_vencimiento, activo " +
+	                 "FROM tb_producto WHERE activo = TRUE";
+
+	    try (Connection cn = ConexionDB.getInstance().getConnection();
+	         PreparedStatement ps = cn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            Producto p = new Producto();
+
+	            p.setIdProducto(rs.getInt("id_producto"));
+	            p.setCodigo(rs.getString("codigo"));
+	            p.setNombre(rs.getString("nombre"));
+	            p.setCategoria(rs.getString("categoria"));
+	            p.setPrecioCompra(rs.getDouble("precio_compra"));
+	            p.setPrecioVenta(rs.getDouble("precio_venta"));
+	            p.setStockActual(rs.getInt("stock_actual"));
+	            p.setStockMinimo(rs.getInt("stock_minimo"));
+
+	            Date fechaSql = rs.getDate("fecha_vencimiento");
+	            if (fechaSql != null) {
+	                p.setFechaVencimiento(fechaSql.toLocalDate());
+	            }
+
+	            p.setActivo(rs.getBoolean("activo"));
+	            lista.add(p);
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println("Error al listar productos activos en ProductoDAO: "
+	                + e.getMessage());
+	    }
+
+	    return lista;
+	}
+	
 }
