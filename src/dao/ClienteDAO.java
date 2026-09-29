@@ -2,7 +2,6 @@ package dao;
 
 import config.ConexionDB;
 import models.Cliente;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +20,7 @@ public class ClienteDAO {
             ps.setString(1, c.getNumDocumento());
             ps.setString(2, c.getNombreCompleto());
             ps.setString(3, c.getTelefono());
-            ps.setBoolean(4, c.isEstado()); 
+            ps.setBoolean(4, c.isEstado());
 
             return ps.executeUpdate() > 0;
 
@@ -47,7 +46,7 @@ public class ClienteDAO {
                     c.setNumDocumento(rs.getString("num_documento"));
                     c.setNombreCompleto(rs.getString("nombre_completo"));
                     c.setTelefono(rs.getString("telefono"));
-                    c.setEstado(rs.getBoolean("estado")); 
+                    c.setEstado(rs.getBoolean("estado"));
 
                     return c;
                 }
@@ -58,5 +57,31 @@ public class ClienteDAO {
         }
 
         return null;
+    }
+
+    public List<Cliente> listar() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT id_cliente, num_documento, nombre_completo, telefono, estado FROM tb_cliente";
+
+        try (Connection cn = ConexionDB.getInstance().getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdPersona(rs.getInt("id_cliente"));
+                c.setNumDocumento(rs.getString("num_documento"));
+                c.setNombreCompleto(rs.getString("nombre_completo"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setEstado(rs.getBoolean("estado"));
+
+                lista.add(c);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al listar clientes en ClienteDAO: " + e.getMessage());
+        }
+
+        return lista;
     }
 }
