@@ -31,19 +31,17 @@ public class ClienteDAO {
         }
     }
 
-    public List<Cliente> buscarPorDocumentoONombre(String criterio) {
-        List<Cliente> lista = new ArrayList<>();
+    public Cliente buscarPorDocumento(String doc) {
         String sql = "SELECT id_cliente, num_documento, nombre_completo, telefono, estado " +
-                     "FROM tb_cliente WHERE num_documento = ? OR nombre_completo LIKE ?";
+                     "FROM tb_cliente WHERE num_documento = ?";
 
         try (Connection cn = ConexionDB.getInstance().getConnection();
              PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setString(1, criterio);
-            ps.setString(2, "%" + criterio + "%");
+            ps.setString(1, doc);
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     Cliente c = new Cliente();
                     c.setIdPersona(rs.getInt("id_cliente"));
                     c.setNumDocumento(rs.getString("num_documento"));
@@ -51,14 +49,14 @@ public class ClienteDAO {
                     c.setTelefono(rs.getString("telefono"));
                     c.setEstado(rs.getBoolean("estado")); 
 
-                    lista.add(c);
+                    return c;
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al buscar clientes en ClienteDAO: " + e.getMessage());
+            System.err.println("Error al buscar cliente por documento en ClienteDAO: " + e.getMessage());
         }
 
-        return lista;
+        return null;
     }
 }
