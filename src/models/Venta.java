@@ -78,15 +78,27 @@ public class Venta {
     }
 
     public double getSubtotal() {
-    	return subtotal;
+        return subtotal;
     }
-    
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
     public double getIgv() {
-    	return igv;
+        return igv;
     }
-    
+
+    public void setIgv(double igv) {
+        this.igv = igv;
+    }
+
     public double getTotal() {
-    	return total;
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 
     public List<DetalleVenta> getDetalles() {

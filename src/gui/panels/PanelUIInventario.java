@@ -159,7 +159,7 @@ public class PanelUIInventario extends JPanel {
 
         gbc.gridx = 1;
         gbc.gridy = row++;
-        gridFields.add(chkActivo, gbc);
+        gridFields.add(chkActivo, (GridBagConstraints) gbc.clone());
 
         panelForm.add(gridFields, BorderLayout.CENTER);
 
@@ -192,11 +192,11 @@ public class PanelUIInventario extends JPanel {
         gbc.weightx = 0.3;
         JLabel label = new JLabel(labelText);
         label.setFont(UIStyles.FONT_SUBTITLE);
-        panel.add(label, gbc);
+        panel.add(label, (GridBagConstraints) gbc.clone());
 
         gbc.gridx = 1;
         gbc.weightx = 0.7;
-        panel.add(component, gbc);
+        panel.add(component, (GridBagConstraints) gbc.clone());
     }
 
     private JPanel crearPanelTabla() {
