@@ -17,7 +17,7 @@ public class VentanaPrincipal extends JFrame {
 
     public VentanaPrincipal() {
         setTitle("Sistema de Gestión - Distribuidora El Dorado S.A.C.");
-        setSize(1280, 720);
+        setSize(1680, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());

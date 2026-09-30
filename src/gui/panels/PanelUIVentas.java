@@ -33,7 +33,7 @@ public class PanelUIVentas extends JPanel {
         lblTitulo.setFont(UIStyles.FONT_TITLE);
         lblTitulo.setForeground(UIStyles.COLOR_PRIMARY);
 
-        JLabel lblSubtitulo = new JLabel("Permite al usuario registrar ventas, procesar pedidos y consultar el historial de transacciones.");
+        JLabel lblSubtitulo = new JLabel("Procesamiento de ventas en caja, cálculo automático de montos y descuento de inventario.");
         lblSubtitulo.setFont(UIStyles.FONT_SUBTITLE);
         lblSubtitulo.setForeground(UIStyles.COLOR_SUBTITLE);
 
