@@ -1,7 +1,9 @@
 package dao;
 
 import config.ConexionDB;
+import models.Cliente;
 import models.DetalleVenta;
+import models.Producto;
 import models.Venta;
 
 import java.sql.Connection;
@@ -10,9 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VentaDAO {
-	public boolean registrarVenta(Venta v) {
+
+    public boolean registrarVenta(Venta v) {
         String sqlVenta = "INSERT INTO tb_venta (id_cliente, fecha_hora, subtotal, igv, total) VALUES (?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO tb_detalle_venta (id_venta, id_producto, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?)";
         String sqlStock = "UPDATE tb_producto SET stock_actual = stock_actual - ? WHERE id_producto = ?";
@@ -87,5 +93,75 @@ public class VentaDAO {
                 }
             }
         }
+    }
+
+    public List<Venta> buscarPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        List<Venta> lista = new ArrayList<>();
+        String sql = "SELECT v.id_venta, v.fecha_hora, v.subtotal, v.igv, v.total, "
+                   + "c.id_cliente, c.num_documento, c.nombre_completo "
+                   + "FROM tb_venta v "
+                   + "INNER JOIN tb_cliente c ON v.id_cliente = c.id_cliente "
+                   + "WHERE DATE(v.fecha_hora) BETWEEN ? AND ? "
+                   + "ORDER BY v.fecha_hora DESC";
+
+        try (Connection con = ConexionDB.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDate(1, java.sql.Date.valueOf(fechaInicio));
+            ps.setDate(2, java.sql.Date.valueOf(fechaFin));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Venta v = new Venta();
+                    v.setIdVenta(rs.getInt("id_venta"));
+                    v.setFechaHora(rs.getTimestamp("fecha_hora").toLocalDateTime());
+                    v.setSubtotal(rs.getDouble("subtotal"));
+                    v.setIgv(rs.getDouble("igv"));
+                    v.setTotal(rs.getDouble("total"));
+
+                    Cliente c = new Cliente();
+                    c.setIdPersona(rs.getInt("id_cliente"));
+                    c.setNumDocumento(rs.getString("num_documento"));
+                    c.setNombreCompleto(rs.getString("nombre_completo"));
+
+                    v.setCliente(c);
+                    v.setDetalles(obtenerDetallesPorVenta(v.getIdVenta(), con));
+
+                    lista.add(v);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar ventas por rango de fechas: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    private List<DetalleVenta> obtenerDetallesPorVenta(int idVenta, Connection con) throws SQLException {
+        List<DetalleVenta> detalles = new ArrayList<>();
+        String sql = "SELECT dv.cantidad, dv.precio_unitario, p.id_producto, p.codigo, p.nombre "
+                   + "FROM tb_detalle_venta dv "
+                   + "INNER JOIN tb_producto p ON dv.id_producto = p.id_producto "
+                   + "WHERE dv.id_venta = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idVenta);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DetalleVenta dv = new DetalleVenta();
+                    dv.setCantidad(rs.getInt("cantidad"));
+                    dv.setPrecioUnitario(rs.getDouble("precio_unitario"));
+
+                    Producto p = new Producto();
+                    p.setIdProducto(rs.getInt("id_producto"));
+                    p.setCodigo(rs.getString("codigo"));
+                    p.setNombre(rs.getString("nombre"));
+
+                    dv.setProducto(p);
+                    detalles.add(dv);
+                }
+            }
+        }
+        return detalles;
     }
 }

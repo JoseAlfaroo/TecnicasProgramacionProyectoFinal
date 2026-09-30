@@ -2,6 +2,7 @@ package gui;
 
 import gui.panels.PanelUIClientes;
 import gui.panels.PanelUIInventario;
+import gui.panels.PanelUIReportes;
 import gui.panels.PanelUIVentas;
 import java.awt.*;
 import javax.swing.*;
@@ -51,10 +52,12 @@ public class VentanaPrincipal extends JFrame {
         JButton btnInventario = new JButton("Inventario".toUpperCase());
         JButton btnClientes = new JButton("Clientes".toUpperCase());
         JButton btnVentas = new JButton("Ventas".toUpperCase());
+        JButton btnReportes = new JButton("Reportes".toUpperCase());
 
         UIStyles.aplicarEstiloBotonMenu(btnInventario);
         UIStyles.aplicarEstiloBotonMenu(btnClientes);
         UIStyles.aplicarEstiloBotonMenu(btnVentas);
+        UIStyles.aplicarEstiloBotonMenu(btnReportes);
 
         int altoBoton = 50;
 
@@ -69,6 +72,10 @@ public class VentanaPrincipal extends JFrame {
         btnVentas.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnVentas.setPreferredSize(new Dimension(anchoMenu, altoBoton));
         btnVentas.setMaximumSize(new Dimension(Integer.MAX_VALUE, altoBoton));
+        
+        btnReportes.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnReportes.setPreferredSize(new Dimension(anchoMenu, altoBoton));
+        btnReportes.setMaximumSize(new Dimension(Integer.MAX_VALUE, altoBoton));
 
         // 4. Armado del Panel de Menú con espacios y separador
         panelBotones.add(lblLogo);
@@ -82,6 +89,8 @@ public class VentanaPrincipal extends JFrame {
         panelBotones.add(btnClientes);
         panelBotones.add(Box.createRigidArea(new Dimension(0, 8)));
         panelBotones.add(btnVentas);
+        panelBotones.add(Box.createRigidArea(new Dimension(0, 8)));
+        panelBotones.add(btnReportes);
 
         panelMenu.add(panelBotones, BorderLayout.NORTH);
 
@@ -92,11 +101,13 @@ public class VentanaPrincipal extends JFrame {
         panelContenido.add(new PanelUIInventario(), "PANEL_INVENTARIO");
         panelContenido.add(new PanelUIClientes(), "PANEL_CLIENTES");
         panelContenido.add(new PanelUIVentas(), "PANEL_VENTAS");
+        panelContenido.add(new PanelUIReportes(), "PANEL_REPORTES");
 
         btnInventario.addActionListener(e -> cardLayout.show(panelContenido, "PANEL_INVENTARIO"));
         btnClientes.addActionListener(e -> cardLayout.show(panelContenido, "PANEL_CLIENTES"));
         btnVentas.addActionListener(e -> cardLayout.show(panelContenido, "PANEL_VENTAS"));
-
+        btnReportes.addActionListener(e -> cardLayout.show(panelContenido, "PANEL_REPORTES"));
+        
         getContentPane().add(panelMenu, BorderLayout.WEST);
         getContentPane().add(panelContenido, BorderLayout.CENTER);
     }
