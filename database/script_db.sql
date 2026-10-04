@@ -1,12 +1,6 @@
 CREATE DATABASE IF NOT EXISTS db_eldorado;
 USE db_eldorado;
 
--- 0. Tabla de Pruebas (Debugging)
-CREATE TABLE IF NOT EXISTS tb_prueba (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    descripcion VARCHAR(255) NOT NULL
-);
-
 -- 1. Tabla de Clientes
 CREATE TABLE IF NOT EXISTS tb_cliente (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
