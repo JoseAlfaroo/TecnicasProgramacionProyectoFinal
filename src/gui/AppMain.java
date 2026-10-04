@@ -3,14 +3,17 @@ package gui;
 import javax.swing.SwingUtilities;
 
 public class AppMain {
+	
+    static {
+        System.setProperty("sun.java2d.uiScale", "1.0");
+    }
 
-    public static void main(String[] args) {
-    	
-    	UIStyles.aplicarTemaModerno();
-    	
+	public static void main(String[] args) {
+        UIStyles.aplicarTemaModerno();
+
         SwingUtilities.invokeLater(() -> {
-            new VentanaLogin().setVisible(true);
+            VentanaPrincipal ventana = new VentanaPrincipal();
+            ventana.setVisible(true);
         });
-        
     }
 }

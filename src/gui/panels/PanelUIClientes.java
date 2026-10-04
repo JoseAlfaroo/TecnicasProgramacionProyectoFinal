@@ -42,6 +42,7 @@ public class PanelUIClientes extends JPanel {
     private JCheckBox chkEstado;
 
     private JButton btnRegistrar;
+    private JButton btnActualizar;
     private JButton btnLimpiar;
 
     private JTextField txtBuscar;
@@ -141,17 +142,20 @@ public class PanelUIClientes extends JPanel {
 
         panelForm.add(gridFields, BorderLayout.CENTER);
 
-        JPanel panelBotones = new JPanel(new java.awt.GridLayout(1, 2, 8, 0));
+        JPanel panelBotones = new JPanel(new java.awt.GridLayout(1, 3, 6, 0));
         panelBotones.setOpaque(false);
 
-        btnLimpiar = new JButton("Nuevo / Limpiar");
-        btnRegistrar = new JButton("Registrar Cliente");
+        btnLimpiar = new JButton("Limpiar");
+        btnRegistrar = new JButton("Registrar");
+        btnActualizar = new JButton("Actualizar"); // agrego un actu por si acaso
 
         btnLimpiar.addActionListener(e -> prepararNuevoRegistro());
         btnRegistrar.addActionListener(e -> registrarCliente());
+        btnActualizar.addActionListener(e -> actualizarCliente()); // listener del botónact
 
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnRegistrar);
+        panelBotones.add(btnActualizar);
 
         panelForm.add(panelBotones, BorderLayout.SOUTH);
 
@@ -266,6 +270,7 @@ public class PanelUIClientes extends JPanel {
         chkEstado.setSelected(tableModel.getValueAt(row, 4).toString().equals("Activo"));
 
         btnRegistrar.setEnabled(false);
+        btnActualizar.setEnabled(true);
     }
 
     private void prepararNuevoRegistro() {
@@ -278,6 +283,7 @@ public class PanelUIClientes extends JPanel {
         chkEstado.setSelected(true);
 
         btnRegistrar.setEnabled(true);
+        btnActualizar.setEnabled(false);
         txtNumDocumento.requestFocus();
     }
 
@@ -304,6 +310,38 @@ public class PanelUIClientes extends JPanel {
             prepararNuevoRegistro();
         } else {
             JOptionPane.showMessageDialog(this, "No se pudo registrar el cliente. Verifique que el documento no esté duplicado.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void actualizarCliente() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla para actualizar.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String numDoc = txtNumDocumento.getText().trim();
+        String nombre = txtNombreCompleto.getText().trim();
+        String telefono = txtTelefono.getText().trim();
+        boolean estado = chkEstado.isSelected();
+
+        if (numDoc.isEmpty() || nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el número de documento y el nombre completo.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Cliente c = new Cliente();
+        c.setIdPersona(Integer.parseInt(txtId.getText()));
+        c.setNumDocumento(numDoc);
+        c.setNombreCompleto(nombre);
+        c.setTelefono(telefono);
+        c.setEstado(estado);
+
+        if (clienteDAO.actualizar(c)) {
+            JOptionPane.showMessageDialog(this, "Cliente actualizado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            cargarDatosTabla(clienteDAO.listar());
+            prepararNuevoRegistro();
+        } else {
+            JOptionPane.showMessageDialog(this, "No se pudo actualizar el cliente. Verifique que el documento no entre en conflicto con otro registro.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -30,12 +30,44 @@ public class ClienteDAO {
         }
     }
 
-    public Cliente buscarPorDocumento(String doc) {
-        String sql = "SELECT id_cliente, num_documento, nombre_completo, telefono, estado " +
-                     "FROM tb_cliente WHERE num_documento = ?";
+    public boolean actualizar(Cliente c) {
+        String sql = "UPDATE tb_cliente SET num_documento = ?, nombre_completo = ?, telefono = ?, estado = ? WHERE id_cliente = ?";
 
         try (Connection cn = ConexionDB.getInstance().getConnection();
              PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, c.getNumDocumento());
+            ps.setString(2, c.getNombreCompleto());
+            ps.setString(3, c.getTelefono());
+            ps.setBoolean(4, c.isEstado());
+            ps.setInt(5, c.getIdPersona());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar cliente en ClienteDAO: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    // Sobrecarga para buscar siempre entre activos e inactivos en el panel clientes
+    public Cliente buscarPorDocumento(String doc) {
+        return buscarPorDocumento(doc, false);
+    }
+    
+    // Permite distinguir entre solo activos, o activos e inactivos
+    public Cliente buscarPorDocumento(String doc, boolean soloActivo) {
+        StringBuilder sql = new StringBuilder(
+            "SELECT id_cliente, num_documento, nombre_completo, telefono, estado " +
+            "FROM tb_cliente WHERE num_documento = ?"
+        );
+
+        if (soloActivo) {
+            sql.append(" AND estado = true");
+        }
+
+        try (Connection cn = ConexionDB.getInstance().getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql.toString())) {
 
             ps.setString(1, doc);
 

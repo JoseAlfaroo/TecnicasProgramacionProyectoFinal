@@ -361,14 +361,14 @@ public class PanelUIVentas extends JPanel {
             return;
         }
 
-        Cliente c = clienteDAO.buscarPorDocumento(doc);
+        Cliente c = clienteDAO.buscarPorDocumento(doc, true);
         if (c != null) {
             clienteSeleccionado = c;
             lblNombreCliente.setText("Cliente: " + c.getNombreCompleto());
         } else {
             clienteSeleccionado = null;
             lblNombreCliente.setText("Cliente: [No Seleccionado]");
-            JOptionPane.showMessageDialog(this, "Cliente no encontrado. Registre al cliente antes de continuar.", "Sin Resultados", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El cliente no existe o se encuentra inactivo.", "Cliente no válido", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

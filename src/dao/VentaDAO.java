@@ -97,18 +97,25 @@ public class VentaDAO {
 
     public List<Venta> buscarPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         List<Venta> lista = new ArrayList<>();
+        
         String sql = "SELECT v.id_venta, v.fecha_hora, v.subtotal, v.igv, v.total, "
                    + "c.id_cliente, c.num_documento, c.nombre_completo "
                    + "FROM tb_venta v "
                    + "INNER JOIN tb_cliente c ON v.id_cliente = c.id_cliente "
-                   + "WHERE DATE(v.fecha_hora) BETWEEN ? AND ? "
+                   + "WHERE v.fecha_hora BETWEEN ? AND ? "
                    + "ORDER BY v.fecha_hora DESC";
 
         try (Connection con = ConexionDB.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setDate(1, java.sql.Date.valueOf(fechaInicio));
-            ps.setDate(2, java.sql.Date.valueOf(fechaFin));
+            // Primer segundo del día inicial, basicamente 00000
+            Timestamp desde = Timestamp.valueOf(fechaInicio.atStartOfDay());
+            
+            // Último segundo del día final osea las 23:59:9999 y muchos nueves
+            Timestamp hasta = Timestamp.valueOf(fechaFin.atTime(java.time.LocalTime.MAX));
+
+            ps.setTimestamp(1, desde);
+            ps.setTimestamp(2, hasta);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
