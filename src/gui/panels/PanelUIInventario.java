@@ -5,6 +5,7 @@ import gui.UIStyles;
 import models.Producto;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -248,6 +249,8 @@ public class PanelUIInventario extends JPanel {
         tblProductos.getColumnModel().getColumn(0).setMaxWidth(0);
         tblProductos.getColumnModel().getColumn(0).setWidth(0);
 
+        aplicarColoresTabla();
+
         tblProductos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && tblProductos.getSelectedRow() != -1) {
                 cargarProductoSeleccionado();
@@ -431,5 +434,33 @@ public class PanelUIInventario extends JPanel {
             JOptionPane.showMessageDialog(this, "Ingrese montos y niveles de stock válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
             return null;
         }
+    }
+    
+    private void aplicarColoresTabla() {
+        tblProductos.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                int stockActual = Integer.parseInt(table.getValueAt(row, 6).toString());
+                int stockMinimo = Integer.parseInt(table.getValueAt(row, 7).toString());
+
+                if (isSelected) {
+                    c.setBackground(table.getSelectionBackground());
+                    c.setForeground(table.getSelectionForeground());
+                } else {
+                    if (stockActual <= stockMinimo) {
+                        c.setBackground(new java.awt.Color(255, 205, 205));
+                        c.setForeground(new java.awt.Color(150, 0, 0));
+                    } else {
+                        c.setBackground(Color.WHITE);
+                        c.setForeground(Color.BLACK);
+                    }
+                }
+                return c;
+            }
+        });
     }
 }

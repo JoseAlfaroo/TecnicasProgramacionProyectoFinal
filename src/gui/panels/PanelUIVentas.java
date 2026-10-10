@@ -349,8 +349,7 @@ public class PanelUIVentas extends JPanel {
             lblPrecioVenta.setText(String.format("S/ %.2f", p.getPrecioVenta()));
             lblStockDisponible.setText(String.valueOf(p.getStockActual()));
 
-            int maxStock = p.getStockActual() > 0 ? p.getStockActual() : 1;
-            spCantidad.setModel(new SpinnerNumberModel(1, 1, maxStock, 1));
+            spCantidad.setModel(new SpinnerNumberModel(1, 1, 9999, 1));
         }
     }
 
@@ -378,16 +377,26 @@ public class PanelUIVentas extends JPanel {
         Producto prod = listaProductosActivos.get(cboProductos.getSelectedIndex());
         int cantidadPedida = (int) spCantidad.getValue();
 
-        if (prod.getStockActual() <= 0) {
-            JOptionPane.showMessageDialog(this, "El producto seleccionado no tiene stock disponible.", "Sin Stock", JOptionPane.WARNING_MESSAGE);
+        if (cantidadPedida > prod.getStockActual()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "No hay stock suficiente para realizar la venta.",
+                "Stock insuficiente",
+                JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
-
+        
         for (DetalleVenta d : carrito) {
             if (d.getProducto().getIdProducto() == prod.getIdProducto()) {
                 int nuevaCantidad = d.getCantidad() + cantidadPedida;
                 if (nuevaCantidad > prod.getStockActual()) {
-                    JOptionPane.showMessageDialog(this, "La cantidad total agregada supera el stock disponible (" + prod.getStockActual() + ").", "Stock Insuficiente", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "No hay stock suficiente para realizar la venta.",
+                        "Stock insuficiente",
+                        JOptionPane.ERROR_MESSAGE
+                    );
                     return;
                 }
                 d.setCantidad(nuevaCantidad);
@@ -395,7 +404,7 @@ public class PanelUIVentas extends JPanel {
                 return;
             }
         }
-
+        
         DetalleVenta nuevoDetalle = new DetalleVenta();
         nuevoDetalle.setProducto(prod);
         nuevoDetalle.setCantidad(cantidadPedida);
